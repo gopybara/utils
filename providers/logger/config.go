@@ -1,29 +1,29 @@
-package configs
+package logger
 
-type LoggerParams struct {
+type Params struct {
 	SentryDsn   *string
 	Environment string
 	ServiceName string
 	CommitTag   string
 }
 
-func (p *LoggerParams) GetSentryDsn() *string {
+func (p *Params) GetSentryDsn() *string {
 	return p.SentryDsn
 }
 
-func (p *LoggerParams) GetEnvironment() string {
+func (p *Params) GetEnvironment() string {
 	return p.Environment
 }
 
-func (p *LoggerParams) GetServiceName() string {
+func (p *Params) GetServiceName() string {
 	return p.ServiceName
 }
 
-func (p *LoggerParams) GetCommitTag() string {
+func (p *Params) GetCommitTag() string {
 	return p.CommitTag
 }
 
-type LoggerConfig interface {
+type Config interface {
 	GetSentryDsn() *string
 	GetEnvironment() string
 	GetServiceName() string

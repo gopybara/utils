@@ -3,14 +3,11 @@ package logger
 import (
 	"fmt"
 	"github.com/getsentry/sentry-go"
-	"github.com/gopybara/utils/configs"
-	"go.uber.org/fx"
-	"go.uber.org/fx/fxevent"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 )
 
-func NewLogger(cfg configs.LoggerConfig) (*zap.Logger, error) {
+func NewLogger(cfg Config) (*zap.Logger, error) {
 	hooks := make([]zap.Option, 0)
 	if cfg.GetSentryDsn() != nil {
 		err := sentry.Init(sentry.ClientOptions{
@@ -46,14 +43,4 @@ func NewLogger(cfg configs.LoggerConfig) (*zap.Logger, error) {
 	}
 
 	return zap.NewProduction(hooks...)
-}
-
-func ProvideLogger() fx.Option {
-	return fx.Provide(NewLogger)
-}
-
-func UseLogger() fx.Option {
-	return fx.WithLogger(func(log *zap.Logger) fxevent.Logger {
-		return &fxevent.ZapLogger{Logger: log}
-	})
 }
