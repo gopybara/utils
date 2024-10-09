@@ -63,6 +63,7 @@ func RunHTTPServer(
 
 				hasHealth := false
 				hasReadiness := false
+				hasStartup := false
 
 				processed := make(map[string]bool)
 
@@ -70,12 +71,19 @@ func RunHTTPServer(
 					if c.Path == "/health" || c.Path == "/healthz" {
 						hasHealth = true
 					}
+
 					if c.Path == "/readiness" {
 						hasReadiness = true
 					}
+
+					if c.Path == "/startup" {
+						hasStartup = true
+					}
+
 					if processed[c.Path] {
 						continue
 					}
+
 					processed[c.Path] = true
 					s.engine.OPTIONS(c.Path, func(ctx *gin.Context) {
 						ctx.Status(200)
@@ -88,6 +96,10 @@ func RunHTTPServer(
 				}
 				if !hasReadiness {
 					s.engine.GET("/readiness")
+				}
+
+				if !hasStartup {
+					s.engine.GET("/startup")
 				}
 				go func() {
 					if err := s.srv.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
@@ -117,6 +129,7 @@ func logMiddleware(log *zap.Logger) gin.HandlerFunc {
 		}
 		end := float64(time.Now().UnixMicro()-timeSpent) / 1000
 		cloned := ctx.Copy()
+
 		log.Info("incoming request",
 			zap.String("method", cloned.Request.Method),
 			zap.String("path", cloned.Request.URL.Path),
